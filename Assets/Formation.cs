@@ -20,11 +20,6 @@ public class Formation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    private void Awake()
-    {
         characters = new Character[ranks, frontage];
         for (int rank = 0; rank < ranks; rank++)
         {
@@ -34,12 +29,16 @@ public class Formation : MonoBehaviour
                 Debug.Log(characters[rank, column]);
             }
         }
-        //Debug.Log(characters[0, 0]);
+    }
+
+    private void Awake()
+    {
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        characters[0, 0].MeleeAttack(characters[1, 1]);
     }
 }

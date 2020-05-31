@@ -40,4 +40,26 @@ public class Character : CharacterTemplate
         temp += currentHealth + "/" + maxHealth;
         return temp;
     }
+
+    public void MeleeAttack(Character target)
+    {
+        string debug = "";
+
+        int dieRoll = Random.Range(1, 21);
+        debug += "Rolled " + dieRoll + "(d20)+";
+        dieRoll += strength + toHitBonus;
+        debug += (strength + toHitBonus) + " vs " + target.defence;
+
+        if (dieRoll >= target.defence)
+        {
+            debug += " Hitting, dealing ";
+            int damageRoll = Random.Range(1, 9);
+            debug += damageRoll + "(d8)+";
+            damageRoll += (int) (strength * 1.5);
+            debug += ((int)(strength * 1.5)) + " damage";
+            target.currentHealth -= damageRoll;
+        }
+
+        Debug.Log(debug);
+    }
 }
