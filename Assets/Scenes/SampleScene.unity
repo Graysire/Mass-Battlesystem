@@ -153,12 +153,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   formationName: Elites
   template:
-    numHitDice: 4
-    hitDiceSize: 4
+    numHitDice: 8
+    hitDiceSize: 8
     strength: 1
-    dexterity: 1
-    constitution: 2
-    toHitProgression: 0.5
+    dexterity: 0
+    constitution: 1
+    toHitProgression: 1
     defenceProgression: 0.25
   troop:
     numHitDice: 0
@@ -205,10 +205,10 @@ MonoBehaviour:
   formationName: Grunts
   template:
     numHitDice: 1
-    hitDiceSize: 6
+    hitDiceSize: 8
     strength: 0
     dexterity: 0
-    constitution: 0
+    constitution: 1
     toHitProgression: 1
     defenceProgression: 0.5
   troop:

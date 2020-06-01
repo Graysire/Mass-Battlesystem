@@ -83,6 +83,12 @@ public class Character : CharacterTemplate
     //resets the current health to equal the maximum health
     public void ResetHealth()
     {
+        //currentHealth = maxHealth;
+        maxHealth = 0;
+        for (int i = 0; i < numHitDice; i++)
+        {
+            maxHealth += Random.Range(1, hitDiceSize + 1) + constitution;
+        }
         currentHealth = maxHealth;
     }
 }
