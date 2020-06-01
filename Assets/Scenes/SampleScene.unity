@@ -131,6 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 232822239}
   - component: {fileID: 232822238}
+  - component: {fileID: 232822240}
   m_Layer: 0
   m_Name: Formation test
   m_TagString: Untagged
@@ -150,16 +151,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f70888388849e074ab85e416dd30302e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  formationName: Elites
   template:
-    numHitDice: 1
-    hitDiceSize: 8
+    numHitDice: 4
+    hitDiceSize: 4
+    strength: 1
+    dexterity: 1
+    constitution: 2
+    toHitProgression: 0.5
+    defenceProgression: 0.25
+  troop:
+    numHitDice: 0
+    hitDiceSize: 0
     strength: 0
     dexterity: 0
-    constitution: 2
-    toHitProgression: 1
-    defenceProgression: 0.25
+    constitution: 0
+    toHitProgression: 0
+    defenceProgression: 0
+    level: 0
+    defence: 0
+    currentHealth: 0
+    maxHealth: 0
   frontage: 5
   ranks: 5
+  currentTroops: 0
+  target: {fileID: 232822240}
 --- !u!4 &232822239
 Transform:
   m_ObjectHideFlags: 0
@@ -174,6 +190,43 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &232822240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232822237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f70888388849e074ab85e416dd30302e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  formationName: Grunts
+  template:
+    numHitDice: 1
+    hitDiceSize: 6
+    strength: 0
+    dexterity: 0
+    constitution: 0
+    toHitProgression: 1
+    defenceProgression: 0.5
+  troop:
+    numHitDice: 0
+    hitDiceSize: 0
+    strength: 0
+    dexterity: 0
+    constitution: 0
+    toHitProgression: 0
+    defenceProgression: 0
+    level: 0
+    defence: 0
+    currentHealth: 0
+    maxHealth: 0
+  frontage: 10
+  ranks: 20
+  currentTroops: 0
+  target: {fileID: 232822238}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
