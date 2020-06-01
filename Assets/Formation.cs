@@ -4,31 +4,33 @@ using UnityEngine;
 
 public class Formation : MonoBehaviour
 {
+    [SerializeField]
+    protected string formationName;
+
     //the template the characters in this unit are based off of
+    //will likely by removed once other battle set-up functionsare implemented
     [SerializeField]
     protected CharacterTemplate template;
+    //the character whose stats are used for all memebrs ofthe unit
+    [SerializeField]
+    protected Character troop;
     //the width of each rank(row) of characters
     [SerializeField]
     protected int frontage;
     //the number of ranks(rows) of characters
     [SerializeField]
     protected int ranks;
+    //the number of Characters remaining in this formation
+    [SerializeField]
+    protected int currentTroops;
 
-    //the matrix representing the characters making up this formation
-    protected Character[,] characters;
+    public Formation target;
 
     // Start is called before the first frame update
     void Start()
     {
-        characters = new Character[ranks, frontage];
-        for (int rank = 0; rank < ranks; rank++)
-        {
-            for (int column = 0; column < frontage; column++)
-            {
-                characters[rank, column] = new Character(template);
-                Debug.Log(characters[rank, column]);
-            }
-        }
+        troop = new Character(template);
+        currentTroops = frontage * ranks;
     }
 
     private void Awake()
@@ -39,6 +41,78 @@ public class Formation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        characters[0, 0].MeleeAttack(characters[1, 1]);
+        // characters[0, 0].MeleeAttack(characters[1, 1]);
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            string temp = target.formationName + ": " + target.currentTroops;
+            this.MeleeAttack(target);
+            temp += " -> " + target.currentTroops + " troops";
+            Debug.Log(temp);
+        }
+        
+    }
+
+    public void MeleeAttack(Formation target)
+    {
+        //the number of attacks this formation will make
+        int numAttackers;
+        //if the target is wider or equal width, make attacks equal to frontage
+        if (target.frontage >= frontage)
+        {
+            numAttackers = frontage;
+        }
+        //if this formation is wider by more than 1, make attacks equal to frontage + 4
+        else if (frontage > target.frontage + 1)
+        {
+            numAttackers = target.frontage + 4;
+        }
+        //if this formation is wider by 1, make attacks equal to frontage + 2
+        else
+        {
+            numAttackers = target.frontage + 2;
+        }
+
+        //for each attack, attack, check if a character has died and apply the resulting effects
+        for (int attacks = 0; attacks < numAttackers; attacks++)
+        {
+            troop.MeleeAttack(target.troop);
+            if (!target.troop.IsAlive())
+            {
+                target.troop.ResetHealth();
+                target.currentTroops--;
+                //if the remaining number of troops is less than 0, the formation is destroyed
+                if (target.currentTroops <= 0)
+                {
+                    //unimplemented
+                }
+                //if the remaining number of troops is less than ranks * frontage then the target formation has lost a rank
+                else if (target.currentTroops < target.ranks * target.frontage && target.currentTroops > target.frontage)
+                {
+                    target.ranks--;
+                }
+            }
+        }
+
+
+        //deprecated version involving Characters being stored in an array, system was deemed unecessarily complex and never finished
+        //determine how many characters can attack
+        //int numAttackers = frontage;
+        //if (frontage > target.frontage + 1)
+        //{
+        //    numAttackers += 2;
+        //}
+
+        //for (int attacker = 0; attacker < frontage; attacker++)
+        //{
+        //    for (int rank = 0; rank < ranks; rank++)
+        //    {
+        //        if (characters[rank, attacker].IsAlive())
+        //        {
+        //            for (int targetRank = 0; targetRank < target.ranks; rank++)
+        //            {
+        //            }
+        //        }
+        //    }
+        //}
     }
 }
