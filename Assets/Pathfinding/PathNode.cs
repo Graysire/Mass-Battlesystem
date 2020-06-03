@@ -18,6 +18,9 @@ public class PathNode
     //the pathing node preceding this node when calculating a path
     public PathNode prevNode;
 
+    //the facing required to move to this square from the adjacent node, facing 0 is up and increases clockwise, facing 5 being up-left
+    public int facing;
+
     //gCost is the distance from the start of the path to this node
     public int gCost;
     //hCost is the distance from the end of the path to this node

@@ -44,7 +44,7 @@ public class PathGrid : MonoBehaviour
         {
             debugStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             PathNode c = WorldToNode(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            Debug.Log(c.posX + " " + c.posY);
+            Debug.Log(c.posX + " " + c.posY + " Facing: " + c.facing);
         }
         //debug that sets the target location of a path
         if (Input.GetMouseButtonDown(1))
@@ -54,7 +54,7 @@ public class PathGrid : MonoBehaviour
        // debug to find a path between two points
         if (Input.GetKeyDown(KeyCode.E))
         {
-            pathfinder.FindPath(debugStart, debugTarget, 1000);
+            pathfinder.FindFormationPath(debugStart, debugTarget, 8, 0);
         }
         //debug to toggle point obstruction
         if (Input.GetKeyDown(KeyCode.O))
@@ -211,42 +211,69 @@ public class PathGrid : MonoBehaviour
         //create the list of nodes to be returned
         List<PathNode> adjacentNodes = new List<PathNode>();
 
-        for (int x = -1; x < 2; x++)
+        if (center.posY - 1 >= 0)
         {
-            for (int y = -1; y < 2; y++)
-            {
-                if (center.posX + x >= 0 && center.posX + x < gridSize.x && center.posY + y >= 0 && center.posY + y < gridSize.y)
-                {
-                    if (Mathf.Abs(x) != Mathf.Abs(y))
-                    {
-                        adjacentNodes.Add(nodeGrid[center.posX + x, center.posY + y]);
-                    }
-                }
-            }
+            adjacentNodes.Add(nodeGrid[center.posX, center.posY - 1]);
+            nodeGrid[center.posX, center.posY - 1].facing = 3;
+        }
+        if (center.posY + 1 < gridSize.y)
+        {
+            adjacentNodes.Add(nodeGrid[center.posX, center.posY + 1]);
+            nodeGrid[center.posX, center.posY + 1].facing = 0;
         }
 
+        //if the node's hex is an even numbered column, add the appropriate adjacent nodes, else do the same for odd numbered column
         if (center.posX % 2 == 0)
         {
-            if (center.posX - 1 >= 0 && center.posY - 1 >= 0)
+            if (center.posX - 1 >= 0)
             {
-                adjacentNodes.Add(nodeGrid[center.posX - 1, center.posY - 1]);
+                adjacentNodes.Add(nodeGrid[center.posX - 1, center.posY]);
+                nodeGrid[center.posX - 1, center.posY].facing = 5;
+                if (center.posY - 1 >= 0)
+                {
+                    adjacentNodes.Add(nodeGrid[center.posX - 1, center.posY - 1]);
+                    nodeGrid[center.posX - 1, center.posY - 1].facing = 4;
+                }
             }
-            if (center.posX + 1 < gridSize.x && center.posY - 1 >= 0)
+            if (center.posX + 1 < gridSize.x)
             {
-                adjacentNodes.Add(nodeGrid[center.posX + 1, center.posY - 1]);
+                adjacentNodes.Add(nodeGrid[center.posX + 1, center.posY]);
+                nodeGrid[center.posX + 1, center.posY].facing = 1;
+                if (center.posY - 1 >= 0)
+                {
+                    adjacentNodes.Add(nodeGrid[center.posX + 1, center.posY - 1]);
+                    nodeGrid[center.posX + 1, center.posY - 1].facing = 2;
+                }
             }
         }
         else
         {
-            if (center.posX + 1 < gridSize.x && center.posY + 1 < gridSize.y)
+            if (center.posX + 1 < gridSize.x)
             {
-                adjacentNodes.Add(nodeGrid[center.posX + 1, center.posY + 1]);
+                adjacentNodes.Add(nodeGrid[center.posX + 1, center.posY]);
+                nodeGrid[center.posX + 1, center.posY].facing = 2;
+                if (center.posY + 1 < gridSize.y)
+                {
+                    adjacentNodes.Add(nodeGrid[center.posX + 1, center.posY + 1]);
+                    nodeGrid[center.posX + 1, center.posY + 1].facing = 1;
+                }
             }
-            if (center.posX - 1 >= 0 && center.posY + 1 < gridSize.y)
+            if (center.posX - 1 >= 0)
             {
-                adjacentNodes.Add(nodeGrid[center.posX - 1, center.posY + 1]);
+                adjacentNodes.Add(nodeGrid[center.posX - 1, center.posY]);
+                nodeGrid[center.posX - 1, center.posY].facing = 4;
+                if (center.posY + 1 < gridSize.y)
+                {
+                    adjacentNodes.Add(nodeGrid[center.posX - 1, center.posY + 1]);
+                    nodeGrid[center.posX - 1, center.posY + 1].facing = 5;
+                }
             }
         }
+
+        //foreach (PathNode n in adjacentNodes)
+        //{
+        //    Debug.Log(n.posX + " " + n.posY + " " + n.facing);
+        //}
 
         return adjacentNodes;
     }

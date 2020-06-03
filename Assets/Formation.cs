@@ -24,7 +24,12 @@ public class Formation : MonoBehaviour
     [SerializeField]
     protected int currentTroops;
 
+    //targetted formation, used as a placeholder for when targeting controls are implemented
     public Formation target;
+
+    //which direction this formation is facing, with 0 and going lcockwise, thus 5 being up-left
+    [Range(0, 5)]
+    protected int facing;
 
     // Start is called before the first frame update
     void Start()
