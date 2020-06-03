@@ -56,20 +56,29 @@ public class Formation : MonoBehaviour
     {
         //the number of attacks this formation will make
         int numAttackers;
+
+        int targetRemainingFrontage = Mathf.Min(target.frontage, target.currentTroops);
+
         //if the target is wider or equal width, make attacks equal to frontage
-        if (target.frontage >= frontage)
+        if (targetRemainingFrontage >= frontage)
         {
             numAttackers = frontage;
         }
         //if this formation is wider by more than 1, make attacks equal to frontage + 4
-        else if (frontage > target.frontage + 1)
+        else if (frontage > targetRemainingFrontage + 1)
         {
-            numAttackers = target.frontage + 4;
+            numAttackers = targetRemainingFrontage + 2;
         }
         //if this formation is wider by 1, make attacks equal to frontage + 2
         else
         {
-            numAttackers = target.frontage + 2;
+            numAttackers = targetRemainingFrontage + 1;
+        }
+
+        //if there are more attacks than troops remaining, reduce number of attacks to troops remaining
+        if (numAttackers > currentTroops)
+        {
+            numAttackers = currentTroops;
         }
 
         //for each attack, attack, check if a character has died and apply the resulting effects
@@ -86,7 +95,7 @@ public class Formation : MonoBehaviour
                     //unimplemented
                 }
                 //if the remaining number of troops is less than ranks * frontage then the target formation has lost a rank
-                else if (target.currentTroops < target.ranks * target.frontage && target.currentTroops > target.frontage)
+                else if (target.currentTroops <= ((target.ranks -1) * target.frontage))
                 {
                     target.ranks--;
                 }
