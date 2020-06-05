@@ -45,13 +45,13 @@ public class Character : CharacterTemplate
         return temp;
     }
 
-    public void MeleeAttack(Character target)
+    public void MeleeAttack(Character target, int attackBonus = 0)
     {
         //string debug = "";
 
         int dieRoll = Random.Range(1, 21);
         //debug += "Rolled " + dieRoll + "(d20)+";
-        dieRoll += strength + toHitBonus;
+        dieRoll += strength + toHitBonus + attackBonus;
         //debug += (strength + toHitBonus) + " vs " + target.defence;
 
         if (dieRoll >= target.defence)
