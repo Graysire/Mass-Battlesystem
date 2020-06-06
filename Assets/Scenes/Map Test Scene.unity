@@ -361,6 +361,7 @@ MonoBehaviour:
   gridSize: {x: 10, y: 35}
   debugObstruction: {fileID: 558584809}
   tileGrid: {fileID: 1066577381}
+  defaultTile: {fileID: 11400000, guid: 96421686c9cc75743a784e35494332cd, type: 2}
 --- !u!4 &1199577004
 Transform:
   m_ObjectHideFlags: 0
