@@ -40,6 +40,9 @@ public class Formation : MonoBehaviour
     float movementDelay;
     //boolean to skip the next animation
     bool skipNextAnimation;
+    //boolean to determine if an animation is ongoing (and prevent playing other animations while true)
+    //this should only be used in cases where rapid animation could cause issues with the game state, such as rapid movement causing inconsistencies in tile obstruction levels
+    bool isAnimating;
 
     // Start is called before the first frame update
     void Start()
@@ -93,7 +96,7 @@ public class Formation : MonoBehaviour
             temp += " -> " + target.currentTroops + " troops";
             Debug.Log(temp);
         }
-        else if (target == this && Input.GetKeyDown(KeyCode.Alpha4))
+        else if (target == this && Input.GetKeyDown(KeyCode.Alpha4) && !isAnimating)
         {
             StartCoroutine(MoveToHex(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
         }
@@ -251,6 +254,9 @@ public class Formation : MonoBehaviour
 
     IEnumerator MoveToHex(Vector3 targetLocation)
     {
+        //lock animation
+        isAnimating = true;
+
         //find a path using the pathgrid
         pathGrid.getFinalPath(transform.position, targetLocation, troop.GetSpeed(), facing);
         //if a path exists, move to it
@@ -287,6 +293,8 @@ public class Formation : MonoBehaviour
         {
             Debug.Log("No path exists to the target point or the point is out of range");
         }
+        //unlock animation
+        isAnimating = false;
     }
 
 }
