@@ -37,6 +37,15 @@ public class Formation : MonoBehaviour
     {
         troop = new Character(template);
         currentTroops = frontage * ranks;
+
+        //get the rotation of the current object
+        Quaternion rotation = gameObject.transform.rotation;
+
+        //calculate the facing from the rotation
+        facing = ((int) Mathf.Round((360 - transform.rotation.eulerAngles.z) / 60)) % 6;
+        //set the rotation based on the facing to ensure it's correct
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, facing * -60);
+
     }
 
     private void Awake()

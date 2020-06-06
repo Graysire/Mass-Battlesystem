@@ -31,7 +31,6 @@ public class CharacterTemplate
 
     public CharacterTemplate(CharacterTemplate template)
     {
-        Debug.Log("1");
         numHitDice = template.numHitDice;
         hitDiceSize = template.hitDiceSize;
         strength = template.strength;
