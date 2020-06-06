@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 //A pathfinding grid used for A* Pathfinding calculations
 public class PathGrid : MonoBehaviour
@@ -19,6 +20,10 @@ public class PathGrid : MonoBehaviour
     //the grid of tilemaps this pathing grid is attached to
     [SerializeField]
     Grid tileGrid;
+
+    //the default tile used when no other tile existson the gird
+    [SerializeField]
+    TileBase defaultTile;
 
     //list of nodes forming a path from one node to another
     public List<PathNode> finalPath = new List<PathNode>();
@@ -45,6 +50,7 @@ public class PathGrid : MonoBehaviour
             debugStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             PathNode c = WorldToNode(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             Debug.Log(c.posX + " " + c.posY + " Facing: " + c.facing);
+            Debug.Log(tileGrid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
         }
         //debug that sets the target location of a path
         if (Input.GetMouseButtonDown(1))
@@ -54,7 +60,7 @@ public class PathGrid : MonoBehaviour
        // debug to find a path between two points
         if (Input.GetKeyDown(KeyCode.E))
         {
-            pathfinder.FindFormationPath(debugStart, debugTarget, 8, 0);
+            pathfinder.FindFormationPath(debugStart, debugTarget, 8000, 0);
         }
         //debug to toggle point obstruction
         if (Input.GetKeyDown(KeyCode.O))
@@ -103,14 +109,25 @@ public class PathGrid : MonoBehaviour
     {
         //instantiates the array of nodes
         nodeGrid = new PathNode[gridSize.y, gridSize.x];
+
+        Tilemap tilemap = tileGrid.gameObject.GetComponentInChildren<Tilemap>();
+
+
         for (int y = 0; y < gridSize.y; y++)
         {
             for (int x = 0; x < gridSize.x; x++)
             {
                 //fills every space on the node grid with a node, defaulting to non-obstructed and with a simple x and y value
                 nodeGrid[y, x] = new PathNode(false, y, x);
-                GameObject ob = Instantiate(debugObstruction, NodeToWorld(nodeGrid[y,x]), new Quaternion());
-                ob.GetComponent<SpriteRenderer>().color = Color.red;
+                //if the tilemap is missing any tiles on the pathable grid, fill those tiles with the defualt tile
+                if (tilemap.GetTile(new Vector3Int(x, y, 0)) == null)
+                {
+                    tilemap.SetTile(new Vector3Int(x, y, 0), defaultTile);
+
+                    //deprecated code to spawn a red square in any location a tile does not exist
+                    //GameObject ob = Instantiate(debugObstruction, NodeToWorld(nodeGrid[y, x]), new Quaternion());
+                    //ob.GetComponent<SpriteRenderer>().color = Color.red;
+                }
             }
         }
     }
