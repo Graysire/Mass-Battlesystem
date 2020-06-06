@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class Formation : MonoBehaviour
 {
+    //the name of this Formation
     [SerializeField]
     protected string formationName;
+    //the pathgrid used for this Formation's pathfinding
+    PathGrid pathGrid;
 
     //the template the characters in this unit are based off of
     //will likely by removed once other battle set-up functionsare implemented
@@ -32,6 +35,12 @@ public class Formation : MonoBehaviour
     [Range(0, 5)]
     protected int facing;
 
+    //the delay between movements when animating movement between hexes
+    [SerializeField]
+    float movementDelay;
+    //boolean to skip the next animation
+    bool skipNextAnimation;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,11 +55,17 @@ public class Formation : MonoBehaviour
         //set the rotation based on the facing to ensure it's correct
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, facing * -60);
 
+        //sets the position of this Formation to be the center of its hex
+        transform.position = pathGrid.NodeToWorld(pathGrid.WorldToNode(transform.position));
+
+        //sets the hex this Formation occupies to be move obstructed
+        pathGrid.WorldToNode(transform.position).isMoveObstructed = true;
     }
 
     private void Awake()
     {
-
+        //gets the scene's pathgrid
+        pathGrid = GameObject.Find("PathManager").GetComponent<PathGrid>();
     }
 
     // Update is called once per frame
@@ -77,6 +92,14 @@ public class Formation : MonoBehaviour
             this.RangedAttack(target, true);
             temp += " -> " + target.currentTroops + " troops";
             Debug.Log(temp);
+        }
+        else if (target == this && Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            StartCoroutine(MoveToHex(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            skipNextAnimation = true;
         }
 
     }
@@ -223,6 +246,46 @@ public class Formation : MonoBehaviour
                     target.ranks--;
                 }
             }
+        }
+    }
+
+    IEnumerator MoveToHex(Vector3 targetLocation)
+    {
+        //find a path using the pathgrid
+        pathGrid.getFinalPath(transform.position, targetLocation, troop.GetSpeed(), facing);
+        //if a path exists, move to it
+        if (pathGrid.finalPath.Count != 0)
+        {
+            //store the final node in case the coroutine needs to end early
+            PathNode finalNode = pathGrid.finalPath[pathGrid.finalPath.Count - 1];
+            //go through each point
+            for (int i = 1; i < pathGrid.finalPath.Count; i++)
+            {
+                //if the animation is not being skipped
+                if (!skipNextAnimation)
+                {
+                    //move to next point, set facing, and wait for the movement delay
+                    transform.position = pathGrid.NodeToWorld(pathGrid.finalPath[i]);
+                    facing = pathGrid.finalPath[i].prevFacing;
+
+                    //set the rotation based on the facing
+                    transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, facing * -60);
+                    yield return new WaitForSeconds(movementDelay);
+                }
+                else
+                {
+                    //if the animation is being skipped go to the final node and break
+                    transform.position = pathGrid.NodeToWorld(finalNode);
+                    facing = finalNode.prevFacing;
+                    transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, facing * -60);
+                    skipNextAnimation = false;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("No path exists to the target point or the point is out of range");
         }
     }
 

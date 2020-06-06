@@ -17,6 +17,8 @@ public class PathNode
 
     //the pathing node preceding this node when calculating a path
     public PathNode prevNode;
+    //the facing this node was entered from
+    public int prevFacing;
 
     //the facing required to move to this square from the adjacent node, facing 0 is up and increases clockwise, facing 5 being up-left
     public int facing;

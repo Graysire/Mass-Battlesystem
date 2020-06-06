@@ -21,6 +21,9 @@ public class CharacterTemplate
     //the bonus a character has to hit points per hit dice
     [SerializeField]
     protected int constitution;
+    //how fast the character can move across the battlefield
+    [SerializeField]
+    protected int speed;
 
     //the bonus a character gains to hit per hit dice
     [SerializeField]
@@ -36,7 +39,14 @@ public class CharacterTemplate
         strength = template.strength;
         dexterity = template.dexterity;
         constitution = template.constitution;
+        speed = template.speed;
         toHitProgression = template.toHitProgression;
         defenceProgression = template.defenceProgression;
+    }
+
+    //returns the speed of the character
+    public int GetSpeed()
+    {
+        return speed;
     }
 }

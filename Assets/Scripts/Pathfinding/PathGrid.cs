@@ -21,15 +21,15 @@ public class PathGrid : MonoBehaviour
     [SerializeField]
     Grid tileGrid;
 
-    //the default tile used when no other tile existson the gird
+    //the default tile used when no other tile exists on the gird
     [SerializeField]
     TileBase defaultTile;
 
     //list of nodes forming a path from one node to another
     public List<PathNode> finalPath = new List<PathNode>();
 
-    Vector3 debugStart;
-    Vector3 debugTarget;
+    //Vector3 debugStart;
+    //Vector3 debugTarget;
 
     private void Awake()
     {
@@ -47,15 +47,15 @@ public class PathGrid : MonoBehaviour
         ////debug that sets the start location of a path
         if (Input.GetMouseButtonDown(0))
         {
-            debugStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //debugStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             PathNode c = WorldToNode(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            Debug.Log(c.posX + " " + c.posY + " Facing: " + c.facing);
+            Debug.Log(c.posX + " " + c.posY + " Facing: " + c.prevFacing);
             //Debug.Log(tileGrid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
         }
         //debug that sets the target location of a path
         if (Input.GetMouseButtonDown(1))
         {
-            debugTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //debugTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             PathNode c = WorldToNode(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             List<PathNode> adjacentNodes = GetAdjacentNodes(c);
 
@@ -67,10 +67,10 @@ public class PathGrid : MonoBehaviour
             Debug.Log(temp);
         }
         // debug to find a path between two points
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            pathfinder.FindFormationPath(debugStart, debugTarget, 8000, 0);
-        }
+        //if (Input.GetKeyDown(KeyCode.E))
+        //{
+        //    pathfinder.FindFormationPath(debugStart, debugTarget, 8000, 0);
+        //}
         //debug to toggle point obstruction
         if (Input.GetKeyDown(KeyCode.O))
         {
@@ -157,13 +157,22 @@ public class PathGrid : MonoBehaviour
 
     public Vector3 NodeToWorld(PathNode node)
     {
-        return tileGrid.CellToWorld(new Vector3Int(node.posY, node.posX, 0));
+        return tileGrid.CellToWorld(new Vector3Int(node.posX, node.posY, 0));
     }
 
     //returns a list of pathing nodes creating the path between two points with a max length
     public List<PathNode> getFinalPath(Vector3 startPos, Vector3 targetPos, int maxLength)
     {
+        finalPath.Clear();
         pathfinder.FindPath(startPos, targetPos, maxLength);
+        return finalPath;
+    }
+
+    //returns a list of pathing nodes creating the path between two points with a max length and facing changes
+    public List<PathNode> getFinalPath(Vector3 startPos, Vector3 targetPos, int maxLength, int startFacing)
+    {
+        finalPath.Clear();
+        pathfinder.FindFormationPath(startPos, targetPos, maxLength, startFacing);
         return finalPath;
     }
 

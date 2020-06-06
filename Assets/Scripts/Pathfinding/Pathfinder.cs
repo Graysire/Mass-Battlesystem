@@ -204,8 +204,8 @@ public class Pathfinder
             //if the current node is the target
             if (currentNode == targetNode)
             {
-                //startNode.isMoveObstructed = false;
-                //targetNode.isMoveObstructed = true;
+                startNode.isMoveObstructed = false;
+                targetNode.isMoveObstructed = true;
                 //create a list to contain the final path
                 List<PathNode> finalPath = new List<PathNode>();
                 //go backwards from the current node until reaching the starting node
@@ -251,6 +251,8 @@ public class Pathfinder
                         setHCost(adjacentNode, targetNode, true);
                         //set the current node as the predecessor of the adjacent node
                         adjacentNode.prevNode = currentNode;
+                        //set the facing as the predeccesor
+                        adjacentNode.prevFacing = adjacentNode.facing;
                         //if the unchecked nodes list does not contain the adjacent node and the adjacent node is not too far from the start, add it
                         if (!OpenList.Contains(adjacentNode) && adjacentNode.gCost <= maxLength)
                         {
