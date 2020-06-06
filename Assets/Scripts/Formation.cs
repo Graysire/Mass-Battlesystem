@@ -48,16 +48,31 @@ public class Formation : MonoBehaviour
     void Update()
     {
         // characters[0, 0].MeleeAttack(characters[1, 1]);
-        if (Input.GetKeyDown(KeyCode.Space) && target != null)
+        if (Input.GetKeyDown(KeyCode.Alpha1) && target != null)
         {
             string temp = target.formationName + ": " + target.currentTroops;
             this.MeleeAttack(target);
             temp += " -> " + target.currentTroops + " troops";
             Debug.Log(temp);
         }
-        
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && target != null)
+        {
+            string temp = target.formationName + ": " + target.currentTroops;
+            this.RangedAttack(target, false);
+            temp += " -> " + target.currentTroops + " troops";
+            Debug.Log(temp);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && target != null)
+        {
+            string temp = target.formationName + ": " + target.currentTroops;
+            this.RangedAttack(target, true);
+            temp += " -> " + target.currentTroops + " troops";
+            Debug.Log(temp);
+        }
+
     }
 
+    //this formation makes a number of attacks against the tagret formation, possibly damaging it
     public void MeleeAttack(Formation target)
     {
         //the number of attacks this formation will make
@@ -87,22 +102,9 @@ public class Formation : MonoBehaviour
             numAttackers = currentTroops;
         }
 
-
-
         //calculate what kind of facing is being attacked, front, front-flank, rear, or rear-flank
-        int facingType = target.facing - facing;
-        int facingType2 = facing - target.facing;
-        //adjust the negative number(if one exists) to be positive
-        if (facingType < 0)
-        {
-            facingType += 6;
-        }
-        else if (facingType2 < 0)
-        {
-            facingType2 += 6;
-        }
-        //calculate the shortest difference between the attacker's facing and the target's facing
-        facingType = Mathf.Min(facingType, facingType2);
+        int facingType = Mathf.Min(Mathf.Abs(target.facing - facing), 6 - Mathf.Abs(target.facing - facing));
+
         //if facingType = 0, their facing is the same, so it's a rear attack
         //if facingType = 1, it's a rear-flank
         //if facingType = 2, it's a front flank
@@ -129,9 +131,6 @@ public class Formation : MonoBehaviour
             bonusAttack = 6;
             Debug.Log("Rear Attack");
         }
-
-
-
 
         //for each attack, attack, check if a character has died and apply the resulting effects
         for (int attacks = 0; attacks < numAttackers; attacks++)
@@ -176,4 +175,46 @@ public class Formation : MonoBehaviour
         //    }
         //}
     }
+
+    public void RangedAttack(Formation target, bool isVolley)
+    {
+        //the number of attacks this formation will make
+        int numAttackers;
+        //the bonus or penalty to hit for the attacks made
+        int bonusAttack = 0;
+
+        //if the formation is volley firing, all of its troops can attack with a penalty
+        if (isVolley)
+        {
+            numAttackers = currentTroops;
+            bonusAttack = -4;
+        }
+        //for direct fire, only the first two ranks can attack
+        else
+        {
+            numAttackers = Mathf.Min(2 * frontage, currentTroops);
+        }
+
+        //for each attack, attack, check if a character has died and apply the resulting effects
+        for (int attacks = 0; attacks < numAttackers; attacks++)
+        {
+            troop.RangedAttack(target.troop, bonusAttack);
+            if (!target.troop.IsAlive())
+            {
+                target.troop.ResetHealth();
+                target.currentTroops--;
+                //if the remaining number of troops is less than 0, the formation is destroyed
+                if (target.currentTroops <= 0)
+                {
+                    //unimplemented destroy formation
+                }
+                //if the remaining number of troops is less than ranks * frontage then the target formation has lost a rank
+                else if (target.currentTroops <= ((target.ranks - 1) * target.frontage))
+                {
+                    target.ranks--;
+                }
+            }
+        }
+    }
+
 }

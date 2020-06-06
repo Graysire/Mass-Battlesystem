@@ -67,6 +67,27 @@ public class Character : CharacterTemplate
         //Debug.Log(debug);
     }
 
+    public void RangedAttack(Character target, int attackBonus = 0)
+    {
+        //string debug = "";
+
+        int dieRoll = Random.Range(1, 21);
+        //debug += "Rolled " + dieRoll + "(d20)+";
+        dieRoll += dexterity + toHitBonus + attackBonus;
+        //debug += (strength + toHitBonus) + " vs " + target.defence;
+
+        if (dieRoll >= target.defence)
+        {
+            //debug += " Hitting, dealing ";
+            int damageRoll = Random.Range(1, 9);
+            //debug += damageRoll + "(d8)";
+ 
+            target.currentHealth -= damageRoll;
+        }
+
+        //Debug.Log(debug);
+    }
+
     //returns if this character's current health is less than 0 or not
     public bool IsAlive()
     {

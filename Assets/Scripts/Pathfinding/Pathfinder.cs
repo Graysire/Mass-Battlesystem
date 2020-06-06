@@ -237,19 +237,7 @@ public class Pathfinder
                 else
                 {
                     //calculate the facing costs assuming both clockwise turning and counter-clockwise turning
-                    int facingCost = adjacentNode.facing - currentNode.facing;
-                    int facingCost2 = currentNode.facing - adjacentNode.facing;
-                    //adjust the negative number(if one exists) to be positive
-                    if (facingCost < 0)
-                    {
-                        facingCost += 6;
-                    }
-                    else if (facingCost2 < 0)
-                    {
-                        facingCost2 += 6;
-                    }
-                    //the minimum number of facing changes
-                    facingCost = Mathf.Min(facingCost, facingCost2);
+                    int facingCost = Mathf.Min(Mathf.Abs(adjacentNode.facing - currentNode.facing), 6 - Mathf.Abs(adjacentNode.facing - currentNode.facing));
 
                     //if the adjacent node is more than 1 tile farther from the start than the current node
                     //or if the unchecked nodes list does not contain the adjacent node
