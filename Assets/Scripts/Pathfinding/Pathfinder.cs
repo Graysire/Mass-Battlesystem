@@ -147,9 +147,9 @@ public class Pathfinder
         //reset gCost of the starting Node
         startNode.gCost = 0;
         //sets hCost of starting Node
-        setHCost(startNode, targetNode, true);
+        setHCost(startNode, targetNode, false);
         //sets the starting facing
-        startNode.facing = startFacing;
+        startNode.prevFacing = startFacing;
 
         if (startNode == null)
         {
@@ -186,7 +186,8 @@ public class Pathfinder
         {
             //start by looking at the first node
             PathNode currentNode = OpenList[0];
-            //comapre to every other node
+            //compare to every other node
+            //string debug ""; //declares debug string
             for (int i = 0; i < OpenList.Count; i++)
             {
                 //if the total cost of a node is lower, or the total cost is equal but node is closer to the target
@@ -195,7 +196,12 @@ public class Pathfinder
                     //that node becomes the new current node
                     currentNode = OpenList[i];
                 }
+                //debug records each node in the open list and its cost
+                //debug += "Node: " + OpenList[i].posX + "," + OpenList[i].posY + " Cost: " + OpenList[i].gCost + " " + OpenList[i].hCost + "\n";
             }
+            //notes the node selected to be the next currentNode and prints the debug message
+            //debug = "CURRENT: " + currentNode.posX + "," + currentNode.posY + " Cost: " + currentNode.gCost + " " + currentNode.hCost + "\n" + debug;
+            //Debug.Log(debug);
             //remove node from the unchecked nodes
             OpenList.Remove(currentNode);
             //add the node to the checked nodes
@@ -204,6 +210,9 @@ public class Pathfinder
             //if the current node is the target
             if (currentNode == targetNode)
             {
+                //logs the movement cost
+                //Debug.Log("Movement Cost: " + targetNode.gCost);
+
                 startNode.isMoveObstructed = false;
                 targetNode.isMoveObstructed = true;
                 //create a list to contain the final path
@@ -237,7 +246,7 @@ public class Pathfinder
                 else
                 {
                     //calculate the facing costs assuming both clockwise turning and counter-clockwise turning
-                    int facingCost = Mathf.Min(Mathf.Abs(adjacentNode.facing - currentNode.facing), 6 - Mathf.Abs(adjacentNode.facing - currentNode.facing));
+                    int facingCost = Mathf.Min(Mathf.Abs(adjacentNode.facing - currentNode.prevFacing), 6 - Mathf.Abs(adjacentNode.facing - currentNode.prevFacing));
 
                     //if the adjacent node is more than 1 tile farther from the start than the current node
                     //or if the unchecked nodes list does not contain the adjacent node
@@ -248,7 +257,7 @@ public class Pathfinder
                         //calculate the adjacent node's distance from the target using manhatten distance
                         //adjacentNode.hCost = Mathf.Abs(adjacentNode.posX - targetNode.posX) + Mathf.Abs(adjacentNode.posY - targetNode.posY);
                         //calculate the adjacent node's distance from the target using pythagorean theorem rounding down
-                        setHCost(adjacentNode, targetNode, true);
+                        setHCost(adjacentNode, targetNode, false);
                         //set the current node as the predecessor of the adjacent node
                         adjacentNode.prevNode = currentNode;
                         //set the facing as the predeccesor
@@ -420,6 +429,13 @@ public class Pathfinder
         else
         {
             startNode.hCost = Mathf.Sqrt(Mathf.Pow(startNode.posX - targetNode.posX, 2f) + Mathf.Pow(startNode.posY - targetNode.posY, 2f));
+
+            //alternate method of determining hCost
+
+            //Vector3 startPos = grid.NodeToWorld(startNode);
+            //Vector3 targetPos = grid.NodeToWorld(targetNode);
+
+            //startNode.hCost = Mathf.Sqrt(Mathf.Pow(startPos.x - targetPos.x, 2f) + Mathf.Pow(startPos.y - targetPos.y, 2f));
         }
     }
 }

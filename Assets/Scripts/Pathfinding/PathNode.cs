@@ -24,11 +24,11 @@ public class PathNode
     public int facing;
 
     //gCost is the distance from the start of the path to this node
-    public int gCost;
+    public float gCost;
     //hCost is the distance from the end of the path to this node
     public float hCost;
     //the total cost of moving to this node
-    public int FCost { get { return gCost + (int) hCost; } }
+    public float FCost { get { return gCost + hCost; } }
 
     //Constructor for the pathfinding node
     public PathNode(bool isObstructed, int gridX, int gridY)

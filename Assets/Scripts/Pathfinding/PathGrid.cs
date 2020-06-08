@@ -171,8 +171,15 @@ public class PathGrid : MonoBehaviour
     //returns a list of pathing nodes creating the path between two points with a max length and facing changes
     public List<PathNode> getFinalPath(Vector3 startPos, Vector3 targetPos, int maxLength, int startFacing)
     {
+        //clear the path
         finalPath.Clear();
+        //attempt to find a path from point to target
         pathfinder.FindFormationPath(startPos, targetPos, maxLength, startFacing);
+        //debug section used to look at the movement cost of individual nodes
+        //for (int i = 0; i < finalPath.Count; i++)
+        //{
+        //    Debug.Log(finalPath[i].posX + "," + finalPath[i].posY + " cost " + finalPath[i].gCost);
+        //}
         return finalPath;
     }
 
