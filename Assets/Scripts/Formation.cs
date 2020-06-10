@@ -252,7 +252,7 @@ public class Formation : MonoBehaviour
         }
     }
 
-    IEnumerator MoveToHex(Vector3 targetLocation)
+    public IEnumerator MoveToHex(Vector3 targetLocation)
     {
         //lock animation
         isAnimating = true;
@@ -297,4 +297,8 @@ public class Formation : MonoBehaviour
         isAnimating = false;
     }
 
+    public string GetName()
+    {
+        return formationName;
+    }
 }
