@@ -27,6 +27,8 @@ public class PathGrid : MonoBehaviour
 
     //list of nodes forming a path from one node to another
     public List<PathNode> finalPath = new List<PathNode>();
+    //the movement cost of the final path
+    public float pathCost;
 
     //Vector3 debugStart;
     //Vector3 debugTarget;
@@ -169,10 +171,11 @@ public class PathGrid : MonoBehaviour
     }
 
     //returns a list of pathing nodes creating the path between two points with a max length and facing changes
-    public List<PathNode> getFinalPath(Vector3 startPos, Vector3 targetPos, int maxLength, int startFacing)
+    public List<PathNode> getFinalPath(Vector3 startPos, Vector3 targetPos, float maxLength, int startFacing)
     {
         //clear the path
         finalPath.Clear();
+        pathCost = 0;
         //attempt to find a path from point to target
         pathfinder.FindFormationPath(startPos, targetPos, maxLength, startFacing);
         //debug section used to look at the movement cost of individual nodes

@@ -138,7 +138,7 @@ public class Pathfinder
     }
 
     //Finds the shortest path between two points where turning counts as movement, if one exists and puts the path into the grid
-    public void FindFormationPath(Vector3 startPos, Vector3 targetPos, int maxLength, int startFacing)
+    public void FindFormationPath(Vector3 startPos, Vector3 targetPos, float maxLength, int startFacing)
     {
         //convert the given positions into pathfinding nodes
         PathNode startNode = grid.WorldToNode(startPos);
@@ -231,6 +231,7 @@ public class Pathfinder
                 finalPath.Reverse();
                 //send the final apth to the grid
                 grid.finalPath = finalPath;
+                grid.pathCost = targetNode.gCost;
 
                 return;
             }

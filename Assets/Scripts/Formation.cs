@@ -26,6 +26,9 @@ public class Formation : MonoBehaviour
     //the number of Characters remaining in this formation
     [SerializeField]
     protected int currentTroops;
+    //the amount of movement this Formation has remaining
+    [SerializeField]
+    protected float movementRemaining;
 
     //targetted formation, used as a placeholder for when targeting controls are implemented
     public Formation target;
@@ -49,6 +52,7 @@ public class Formation : MonoBehaviour
     {
         troop = new Character(template);
         currentTroops = frontage * ranks;
+        movementRemaining = troop.GetSpeed();
 
         //get the rotation of the current object
         Quaternion rotation = gameObject.transform.rotation;
@@ -100,7 +104,7 @@ public class Formation : MonoBehaviour
         {
             StartCoroutine(MoveToHex(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
         }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(KeyCode.Escape) && isAnimating)
         {
             skipNextAnimation = true;
         }
@@ -258,12 +262,16 @@ public class Formation : MonoBehaviour
         isAnimating = true;
 
         //find a path using the pathgrid
-        pathGrid.getFinalPath(transform.position, targetLocation, troop.GetSpeed(), facing);
+        pathGrid.getFinalPath(transform.position, targetLocation, movementRemaining, facing);
         //if a path exists, move to it
         if (pathGrid.finalPath.Count != 0)
         {
+            //subtract the movement cost from remaining movement
+            movementRemaining -= pathGrid.pathCost;
             //store the final node in case the coroutine needs to end early
             PathNode finalNode = pathGrid.finalPath[pathGrid.finalPath.Count - 1];
+            //subtract the movement cost from the remaining movement
+
             //go through each point
             for (int i = 1; i < pathGrid.finalPath.Count; i++)
             {
