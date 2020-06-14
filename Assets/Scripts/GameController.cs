@@ -4,7 +4,21 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    //the current phase of the battle
     public static BattlePhase currentPhase;
+    //the main GameController
+    public static GameController main;
+    //the lsit of all Formations participating in the battle
+    public List<Formation> formationList;
+
+    private void Awake()
+    {
+        //the first GameControll should become the main one
+        if (main == null)
+        {
+            main = this;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -18,8 +32,37 @@ public class GameController : MonoBehaviour
         
     }
 
+    //changes to the next phase of the game
+    public void changePhase()
+    {
+        switch (currentPhase)
+        {
+            case BattlePhase.MISSILE:
+                //Casualty sub-phase
+                foreach (Formation form in formationList)
+                {
+                    form.ApplyCasualties();
+                }
+                currentPhase = BattlePhase.MOVEMENT;
+                break;
+            case BattlePhase.MOVEMENT:
+                currentPhase = BattlePhase.MELEE;
+                break;
+            case BattlePhase.MELEE:
+                foreach (Formation form in formationList)
+                {
+                    form.ApplyCasualties();
+                }
+                currentPhase = BattlePhase.MORALE;
+                break;
+            case BattlePhase.MORALE:
+                currentPhase = BattlePhase.MISSILE;
+                break;
+        }
+    }
+
     public enum BattlePhase
     {
-        MISSILE, CASUALTY, MOVEMENT, MELEE, MORALE
+        MISSILE, MOVEMENT, MELEE, MORALE
     }
 }

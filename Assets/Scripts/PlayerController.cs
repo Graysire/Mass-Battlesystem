@@ -41,11 +41,32 @@ public class PlayerController : MonoBehaviour
             //calculate whether anything has been clicked on
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+            Formation temp = null;
 
+            if (hit)
+            {
+                temp = hit.collider.GetComponent<Formation>();
+                Debug.Log(selectedFormation.GetName());
+            }
+
+            //take an action based on the current phase
             switch (GameController.currentPhase)
             {
+                case GameController.BattlePhase.MISSILE:
+                    if (temp != null)
+                    {
+                        //add prompt or seperate controls for non-volley missile fire
+                        selectedFormation.RangedAttack(temp, true);
+                    }
+                    break;
                 case GameController.BattlePhase.MOVEMENT:
                     StartCoroutine(selectedFormation.MoveToHex(mousePos));
+                    break;
+                case GameController.BattlePhase.MELEE:
+                    if (temp != null)
+                    {
+                        selectedFormation.MeleeAttack(temp);
+                    }
                     break;
             }
         }

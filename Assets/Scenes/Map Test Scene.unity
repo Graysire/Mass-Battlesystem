@@ -242,6 +242,8 @@ MonoBehaviour:
   frontage: 4
   ranks: 4
   currentTroops: 0
+  movementRemaining: 0
+  casualties: 0
   target: {fileID: 0}
   facing: 0
   movementDelay: 0
@@ -392,6 +394,8 @@ MonoBehaviour:
   frontage: 10
   ranks: 10
   currentTroops: 0
+  movementRemaining: 0
+  casualties: 0
   target: {fileID: 0}
   facing: 0
   movementDelay: 0
@@ -559,6 +563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 900006b1ec0b958449e8ff958f134c7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  formationList: []
 --- !u!1 &960017069
 GameObject:
   m_ObjectHideFlags: 0
@@ -715,10 +720,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4609830e189fd764f95b05d577520b52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: {x: 20, y: 35}
+  gridSize: {x: 18, y: 35}
   debugObstruction: {fileID: 558584809}
   tileGrid: {fileID: 1066577381}
   defaultTile: {fileID: 11400000, guid: 96421686c9cc75743a784e35494332cd, type: 2}
+  pathCost: 0
 --- !u!4 &1199577004
 Transform:
   m_ObjectHideFlags: 0

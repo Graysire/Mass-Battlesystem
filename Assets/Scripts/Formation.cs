@@ -29,6 +29,9 @@ public class Formation : MonoBehaviour
     //the amount of movement this Formation has remaining
     [SerializeField]
     protected float movementRemaining;
+    //the nubmer of casualties this Formation will take between phases
+    [SerializeField]
+    protected int casualties = 0;
 
     //targetted formation, used as a placeholder for when targeting controls are implemented
     public Formation target;
@@ -67,6 +70,9 @@ public class Formation : MonoBehaviour
 
         //sets the hex this Formation occupies to be move obstructed
         pathGrid.WorldToNode(transform.position).isMoveObstructed = true;
+
+        //add this formation ot the list of formations participating in the battle
+        GameController.main.formationList.Add(this);
     }
 
     private void Awake()
@@ -175,44 +181,13 @@ public class Formation : MonoBehaviour
         for (int attacks = 0; attacks < numAttackers; attacks++)
         {
             troop.MeleeAttack(target.troop, bonusAttack);
+            //if the target troop dies, reset their health and increment the casualties
             if (!target.troop.IsAlive())
             {
                 target.troop.ResetHealth();
-                target.currentTroops--;
-                //if the remaining number of troops is less than 0, the formation is destroyed
-                if (target.currentTroops <= 0)
-                {
-                    //unimplemented destroy formation
-                }
-                //if the remaining number of troops is less than ranks * frontage then the target formation has lost a rank
-                else if (target.currentTroops <= ((target.ranks -1) * target.frontage))
-                {
-                    target.ranks--;
-                }
+                target.casualties++;
             }
         }
-
-
-        //deprecated version involving Characters being stored in an array, system was deemed unecessarily complex and never finished
-        //determine how many characters can attack
-        //int numAttackers = frontage;
-        //if (frontage > target.frontage + 1)
-        //{
-        //    numAttackers += 2;
-        //}
-
-        //for (int attacker = 0; attacker < frontage; attacker++)
-        //{
-        //    for (int rank = 0; rank < ranks; rank++)
-        //    {
-        //        if (characters[rank, attacker].IsAlive())
-        //        {
-        //            for (int targetRank = 0; targetRank < target.ranks; rank++)
-        //            {
-        //            }
-        //        }
-        //    }
-        //}
     }
 
     public void RangedAttack(Formation target, bool isVolley)
@@ -238,21 +213,29 @@ public class Formation : MonoBehaviour
         for (int attacks = 0; attacks < numAttackers; attacks++)
         {
             troop.RangedAttack(target.troop, bonusAttack);
+            //if the target troop dies, reset their health and increment the casualties
             if (!target.troop.IsAlive())
             {
                 target.troop.ResetHealth();
-                target.currentTroops--;
-                //if the remaining number of troops is less than 0, the formation is destroyed
-                if (target.currentTroops <= 0)
-                {
-                    //unimplemented destroy formation
-                }
-                //if the remaining number of troops is less than ranks * frontage then the target formation has lost a rank
-                else if (target.currentTroops <= ((target.ranks - 1) * target.frontage))
-                {
-                    target.ranks--;
-                }
+                target.casualties++;
             }
+        }
+    }
+
+    //apply any casualties to the current number of troops
+    public void ApplyCasualties()
+    {
+        //change number of current troops
+        currentTroops -= casualties;
+        //if this Formation has no remaining troops destroy the Formation
+        if (currentTroops <= 0)
+        {
+            //unimplemented destroy Formation
+        }
+        //otherwise if the Formation has lost enoguh troops to lose a rank, update the number of ranks
+        else if (currentTroops <= (ranks - 1) * frontage)
+        {
+            ranks = Mathf.CeilToInt(currentTroops / frontage);
         }
     }
 
