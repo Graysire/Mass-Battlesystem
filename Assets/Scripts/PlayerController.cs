@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
             if (selectedFormation != null)
             {
                 //right arrow key turns the selectedformation to the right
-                selectedFormation.changeFacing(1);
+                selectedFormation.ChangeFacing(1);
             }
         }
         //turn to the left
@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour
             if (selectedFormation != null)
             {
                 //right arrow key turns the selectedformation to the right
-                selectedFormation.changeFacing(-1);
+                selectedFormation.ChangeFacing(-1);
             }
         }
     }

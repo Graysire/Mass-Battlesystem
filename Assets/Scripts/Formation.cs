@@ -239,7 +239,8 @@ public class Formation : MonoBehaviour
         }
     }
 
-    public void changeFacing(int facingChange)
+    //turns the formation by facing change (assuming facing change i a number between 5 and -5
+    public void ChangeFacing(int facingChange)
     {
         if (movementRemaining > 0)
         {
@@ -258,6 +259,12 @@ public class Formation : MonoBehaviour
 
             movementRemaining -= Mathf.Abs(facingChange);
         }
+    }
+
+    //resets the movement speed back to full
+    public void ResetMovement()
+    {
+        movementRemaining = troop.GetSpeed();
     }
 
     public IEnumerator MoveToHex(Vector3 targetLocation)

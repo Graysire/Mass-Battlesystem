@@ -42,6 +42,7 @@ public class GameController : MonoBehaviour
                 foreach (Formation form in formationList)
                 {
                     form.ApplyCasualties();
+                    form.ResetMovement();
                 }
                 currentPhase = BattlePhase.MOVEMENT;
                 break;
