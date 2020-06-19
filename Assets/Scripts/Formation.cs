@@ -239,6 +239,27 @@ public class Formation : MonoBehaviour
         }
     }
 
+    public void changeFacing(int facingChange)
+    {
+        if (movementRemaining > 0)
+        {
+            //change the facing
+            int tempFacing = facing + facingChange;
+            //ensurethat the facing remains valid
+            tempFacing %= 6;
+            if (tempFacing < 0)
+            {
+                tempFacing += 6;
+            }
+
+            //apply facing changes
+            facing = tempFacing;
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, facing * -60);
+
+            movementRemaining -= Mathf.Abs(facingChange);
+        }
+    }
+
     public IEnumerator MoveToHex(Vector3 targetLocation)
     {
         //lock animation

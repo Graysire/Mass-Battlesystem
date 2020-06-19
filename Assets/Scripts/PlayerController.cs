@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
             if (hit)
             {
                 temp = hit.collider.GetComponent<Formation>();
-                Debug.Log(selectedFormation.GetName());
+                //Debug.Log(selectedFormation.GetName());
             }
 
             //take an action based on the current phase
@@ -68,6 +68,29 @@ public class PlayerController : MonoBehaviour
                         selectedFormation.MeleeAttack(temp);
                     }
                     break;
+            }
+        }
+        //if hitting enter, change the phase
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            GameController.main.changePhase();
+        }
+        //turn to the right
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if (selectedFormation != null)
+            {
+                //right arrow key turns the selectedformation to the right
+                selectedFormation.changeFacing(1);
+            }
+        }
+        //turn to the left
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if (selectedFormation != null)
+            {
+                //right arrow key turns the selectedformation to the right
+                selectedFormation.changeFacing(-1);
             }
         }
     }
