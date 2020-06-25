@@ -120,6 +120,12 @@ public class Formation : MonoBehaviour
     //this formation makes a number of attacks against the tagret formation, possibly damaging it
     public void MeleeAttack(Formation target)
     {
+        if (!(pathGrid.GetDistance(transform.position, target.transform.position) == 1))
+        {
+            Debug.Log("Target out of range");
+            return;
+        }
+
         //the number of attacks this formation will make
         int numAttackers;
 
@@ -237,6 +243,7 @@ public class Formation : MonoBehaviour
         {
             ranks = Mathf.CeilToInt(currentTroops / frontage);
         }
+        casualties = 0;
     }
 
     //turns the formation by facing change (assuming facing change i a number between 5 and -5
@@ -273,7 +280,7 @@ public class Formation : MonoBehaviour
         isAnimating = true;
 
         //find a path using the pathgrid
-        pathGrid.getFinalPath(transform.position, targetLocation, movementRemaining, facing);
+        pathGrid.GetFinalPath(transform.position, targetLocation, movementRemaining, facing);
         //if a path exists, move to it
         if (pathGrid.finalPath.Count != 0)
         {

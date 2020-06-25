@@ -171,7 +171,7 @@ public class PathGrid : MonoBehaviour
     }
 
     //returns a list of pathing nodes creating the path between two points with a max length and facing changes
-    public List<PathNode> getFinalPath(Vector3 startPos, Vector3 targetPos, float maxLength, int startFacing)
+    public List<PathNode> GetFinalPath(Vector3 startPos, Vector3 targetPos, float maxLength, int startFacing)
     {
         //clear the path
         finalPath.Clear();
@@ -184,6 +184,12 @@ public class PathGrid : MonoBehaviour
         //    Debug.Log(finalPath[i].posX + "," + finalPath[i].posY + " cost " + finalPath[i].gCost);
         //}
         return finalPath;
+    }
+
+
+    public int GetDistance(Vector3 startPos, Vector3 targetPos)
+    {
+        return pathfinder.FindDistance(startPos, targetPos);
     }
 
     //returns whether or not a line of sight path can be created between two targets

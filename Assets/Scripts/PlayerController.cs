@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
         //if hitting enter, change the phase
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            GameController.main.changePhase();
+            GameController.main.ChangePhase();
         }
         //turn to the right
         if (Input.GetKeyDown(KeyCode.RightArrow))

@@ -276,8 +276,108 @@ public class Pathfinder
         return;
     }
 
+    //Finds the distance between two points
+    public int FindDistance(Vector3 startPos, Vector3 targetPos)
+    {
+        //convert the given positions into pathfinding nodes
+        PathNode startNode = grid.WorldToNode(startPos);
+        PathNode targetNode = grid.WorldToNode(targetPos);
 
+        //reset gCost of the starting Node
+        startNode.gCost = 0;
+        //sets hCost of starting Node
+        setHCost(startNode, targetNode, false);
 
+        if (startNode == null)
+        {
+            Debug.Log("Starting Tile Out of Bounds");
+            return -1;
+        }
+        else if (targetNode == null)
+        {
+            Debug.Log("Target Tile Out of Bounds");
+            return -1;
+        }
+        else if (startNode == targetNode)
+        {
+            Debug.Log("Starting Tile and Target Tile are identical");
+            return 0;
+        }
+
+        //list of pathing nodes that have not been checked yet
+        List<PathNode> OpenList = new List<PathNode>();
+        //set of pathing nodes that have been checked
+        HashSet<PathNode> ClosedList = new HashSet<PathNode>();
+
+        //add the first node to the unchecked nodes
+        OpenList.Add(startNode);
+
+        //while there are unchecked nodes, keep checking
+        while (OpenList.Count > 0)
+        {
+            //start by looking at the first node
+            PathNode currentNode = OpenList[0];
+            //compare to every other node
+            //string debug ""; //declares debug string
+            for (int i = 0; i < OpenList.Count; i++)
+            {
+                //if the total cost of a node is lower, or the total cost is equal but node is closer to the target
+                if (OpenList[i].FCost < currentNode.FCost || currentNode.FCost == OpenList[i].FCost && OpenList[i].hCost < currentNode.hCost)
+                {
+                    //that node becomes the new current node
+                    currentNode = OpenList[i];
+                }
+                //debug records each node in the open list and its cost
+                //debug += "Node: " + OpenList[i].posX + "," + OpenList[i].posY + " Cost: " + OpenList[i].gCost + " " + OpenList[i].hCost + "\n";
+            }
+            //notes the node selected to be the next currentNode and prints the debug message
+            //debug = "CURRENT: " + currentNode.posX + "," + currentNode.posY + " Cost: " + currentNode.gCost + " " + currentNode.hCost + "\n" + debug;
+            //Debug.Log(debug);
+            //remove node from the unchecked nodes
+            OpenList.Remove(currentNode);
+            //add the node to the checked nodes
+            ClosedList.Add(currentNode);
+
+            //if the current node is the target
+            if (currentNode == targetNode)
+            {
+                //return the distance from the start node to ending node
+                return (int) targetNode.gCost;
+            }
+
+            //look at each adjacent node
+            foreach (PathNode adjacentNode in grid.GetAdjacentNodes(currentNode))
+            {
+                //if it has already been checked skip it
+                if (ClosedList.Contains(adjacentNode))
+                {
+                    continue;
+                }
+                else
+                {
+
+                    //if the adjacent node is more than 1 tile farther from the start than the current node
+                    //or if the unchecked nodes list does not contain the adjacent node
+                    if (!OpenList.Contains(adjacentNode) || currentNode.gCost + 1 < adjacentNode.gCost)
+                    {
+                        //the adjacent node's distance from the start node along this path is this node's distance + 1
+                        adjacentNode.gCost = currentNode.gCost + 1;
+                        //calculate the adjacent node's distance from the target using manhatten distance
+                        //adjacentNode.hCost = Mathf.Abs(adjacentNode.posX - targetNode.posX) + Mathf.Abs(adjacentNode.posY - targetNode.posY);
+                        //calculate the adjacent node's distance from the target using pythagorean theorem rounding down
+                        setHCost(adjacentNode, targetNode, false);
+                        //if the unchecked nodes list does not contain the adjacent node and the adjacent node is not too far from the start, add it
+                        if (!OpenList.Contains(adjacentNode))
+                        {
+                            OpenList.Add(adjacentNode);
+                        }
+                    }
+                }
+            }
+        }
+        Debug.Log("Movement out of Range");
+        return -1;
+    }
 
     //Returns true if the straight line between two points is unobstructed, false otherwise
     public bool FindSightPath(Vector3 startPos, Vector3 targetPos, int maxLength)

@@ -33,7 +33,7 @@ public class GameController : MonoBehaviour
     }
 
     //changes to the next phase of the game
-    public void changePhase()
+    public void ChangePhase()
     {
         switch (currentPhase)
         {
@@ -60,6 +60,7 @@ public class GameController : MonoBehaviour
                 currentPhase = BattlePhase.MISSILE;
                 break;
         }
+        Debug.Log("Current Phase is now " + currentPhase);
     }
 
     public enum BattlePhase
