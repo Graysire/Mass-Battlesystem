@@ -304,6 +304,7 @@ public class Formation : MonoBehaviour
         movementRemaining = troop.GetSpeed();
     }
 
+    //moves this formation to the target hex if it is within movement range
     public IEnumerator MoveToHex(Vector3 targetLocation)
     {
         //lock animation
@@ -353,8 +354,21 @@ public class Formation : MonoBehaviour
         isAnimating = false;
     }
 
+    //returns the name of the formation
     public string GetName()
     {
         return formationName;
+    }
+
+    //returns the pathing grid this Formation uses
+    public PathGrid GetPathGrid()
+    {
+        return pathGrid;
+    }
+
+    //returns the facing of this formation
+    public int GetFacing()
+    {
+        return facing;
     }
 }

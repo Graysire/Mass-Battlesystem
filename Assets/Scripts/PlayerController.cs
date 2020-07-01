@@ -93,5 +93,24 @@ public class PlayerController : MonoBehaviour
                 selectedFormation.ChangeFacing(-1);
             }
         }
+        //move forward one hex
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            
+            if (selectedFormation != null)
+            {
+                //get the grid and starting node
+                PathGrid grid = selectedFormation.GetPathGrid();
+                PathNode startNode = grid.WorldToNode(selectedFormation.transform.position);
+                //find the node in front of the formation and move to it
+                foreach (PathNode node in grid.GetAdjacentNodes(startNode))
+                {
+                    if (node.facing == selectedFormation.GetFacing())
+                    {
+                        StartCoroutine(selectedFormation.MoveToHex(grid.NodeToWorld(node)));
+                    }
+                }
+            }
+        }
     }
 }
