@@ -51,7 +51,7 @@ public class PathGrid : MonoBehaviour
         {
             //debugStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             PathNode c = WorldToNode(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            Debug.Log(c.posX + " " + c.posY + " Facing: " + c.prevFacing);
+            //Debug.Log(c.posX + " " + c.posY + " Facing: " + c.prevFacing);
             //Debug.Log(tileGrid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
         }
         //debug that sets the target location of a path
@@ -61,12 +61,12 @@ public class PathGrid : MonoBehaviour
             PathNode c = WorldToNode(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             List<PathNode> adjacentNodes = GetAdjacentNodes(c);
 
-            string temp = "";
-            foreach (PathNode n in adjacentNodes)
-            {
-                temp += n.posX + " " + n.posY + " " + n.facing + "\n";
-            }
-            Debug.Log(temp);
+            //string temp = "";
+            //foreach (PathNode n in adjacentNodes)
+            //{
+            //    temp += n.posX + " " + n.posY + " " + n.facing + "\n";
+            //}
+            //Debug.Log(temp);
         }
         // debug to find a path between two points
         //if (Input.GetKeyDown(KeyCode.E))

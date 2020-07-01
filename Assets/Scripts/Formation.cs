@@ -41,6 +41,9 @@ public class Formation : MonoBehaviour
     [Range(0, 5)]
     protected int facing;
 
+    //whether or not the Formation has its attack remaining
+    protected bool hasAttacked = false;
+
     //the delay between movements when animating movement between hexes
     [SerializeField]
     float movementDelay;
@@ -125,6 +128,11 @@ public class Formation : MonoBehaviour
             Debug.Log("Target out of range");
             return;
         }
+        else if (hasAttacked)
+        {
+            Debug.Log("This Formation has already attacked");
+            return;
+        }
 
         //the number of attacks this formation will make
         int numAttackers;
@@ -194,10 +202,24 @@ public class Formation : MonoBehaviour
                 target.casualties++;
             }
         }
+
+        hasAttacked = true;
     }
 
     public void RangedAttack(Formation target, bool isVolley)
     {
+        if (!(pathGrid.GetDistance(transform.position, target.transform.position) <= 5))
+        {
+            Debug.Log("Target out of range");
+            return;
+        }
+        else if (hasAttacked)
+        {
+            Debug.Log("This Formation has already attacked");
+            return;
+        }
+
+
         //the number of attacks this formation will make
         int numAttackers;
         //the bonus or penalty to hit for the attacks made
@@ -226,6 +248,8 @@ public class Formation : MonoBehaviour
                 target.casualties++;
             }
         }
+
+        hasAttacked = true;
     }
 
     //apply any casualties to the current number of troops
@@ -244,6 +268,12 @@ public class Formation : MonoBehaviour
             ranks = Mathf.CeilToInt(currentTroops / frontage);
         }
         casualties = 0;
+    }
+
+    //resets hasAttacked to false
+    public void ResetHasAttacked()
+    {
+        hasAttacked = false;
     }
 
     //turns the formation by facing change (assuming facing change i a number between 5 and -5

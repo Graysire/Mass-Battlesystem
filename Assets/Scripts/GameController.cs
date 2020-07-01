@@ -23,7 +23,7 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentPhase = BattlePhase.MOVEMENT;
+        currentPhase = BattlePhase.MISSILE;
     }
 
     // Update is called once per frame
@@ -47,6 +47,10 @@ public class GameController : MonoBehaviour
                 currentPhase = BattlePhase.MOVEMENT;
                 break;
             case BattlePhase.MOVEMENT:
+                foreach (Formation form in formationList)
+                {
+                    form.ResetHasAttacked();
+                }
                 currentPhase = BattlePhase.MELEE;
                 break;
             case BattlePhase.MELEE:
@@ -57,6 +61,10 @@ public class GameController : MonoBehaviour
                 currentPhase = BattlePhase.MORALE;
                 break;
             case BattlePhase.MORALE:
+                foreach (Formation form in formationList)
+                {
+                    form.ResetHasAttacked();
+                }
                 currentPhase = BattlePhase.MISSILE;
                 break;
         }
