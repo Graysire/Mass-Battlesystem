@@ -239,8 +239,24 @@ MonoBehaviour:
     defence: 0
     currentHealth: 0
     maxHealth: 0
-  frontage: 4
-  ranks: 4
+  meleeWeapon:
+    wepName: Halberd
+    range: 1
+    reach: 2
+    numDice: 1
+    diceSize: 10
+    isFinesse: 0
+    canVolley: 0
+  rangedWeapon:
+    wepName: Javelin
+    range: 3
+    reach: 1
+    numDice: 1
+    diceSize: 6
+    isFinesse: 1
+    canVolley: 1
+  frontage: 5
+  ranks: 6
   currentTroops: 0
   movementRemaining: 0
   casualties: 0
@@ -373,11 +389,11 @@ MonoBehaviour:
     numHitDice: 2
     hitDiceSize: 4
     strength: 0
-    dexterity: 2
+    dexterity: 0
     constitution: 0
     speed: 10
     toHitProgression: 1
-    defenceProgression: 1
+    defenceProgression: 0.25
   troop:
     numHitDice: 2
     hitDiceSize: 4
@@ -391,6 +407,22 @@ MonoBehaviour:
     defence: 0
     currentHealth: 0
     maxHealth: 0
+  meleeWeapon:
+    wepName: Longsword
+    range: 1
+    reach: 1
+    numDice: 1
+    diceSize: 8
+    isFinesse: 0
+    canVolley: 0
+  rangedWeapon:
+    wepName: 
+    range: 0
+    reach: 0
+    numDice: 0
+    diceSize: 0
+    isFinesse: 0
+    canVolley: 0
   frontage: 10
   ranks: 10
   currentTroops: 0

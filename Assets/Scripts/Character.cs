@@ -45,48 +45,116 @@ public class Character : CharacterTemplate
         return temp;
     }
 
-    public void MeleeAttack(Character target, int attackBonus = 0)
+    //an attack from this character against a target character using a weapon
+    public void Attack(Character target, Weapon weapon = null, int attackBonus = 0)
     {
-        //string debug = "";
-
+        //rolls 1d20 before modifiers
         int dieRoll = Random.Range(1, 21);
-        //debug += "Rolled " + dieRoll + "(d20)+";
-        dieRoll += strength + toHitBonus + attackBonus;
-        //debug += (strength + toHitBonus) + " vs " + target.defence;
-
-        if (dieRoll >= target.defence)
+        //bool stating if a natural 20 was rolled
+        bool natTwenty = false;
+        //a roll of 1 is always a fail
+        if (dieRoll == 1)
         {
-            //debug += " Hitting, dealing ";
-            int damageRoll = Random.Range(1, 9);
-            //debug += damageRoll + "(d8)+";
-            damageRoll += (int) (strength * 1.5);
-            //debug += ((int)(strength * 1.5)) + " damage";
-            target.currentHealth -= damageRoll;
+            return;
+        }
+        else if (dieRoll == 20)
+        {
+            natTwenty = true;
         }
 
-        //Debug.Log(debug);
+        //if a 20 was not rolled, add modifiers, a 20 is an automatic success
+        if (!natTwenty)
+        {
+            dieRoll += toHitBonus + attackBonus;
+            //if the character is using a weapon and it is finesse, add dexterity
+            if (weapon != null && weapon.GetIsFinesse() == true)
+            {
+                dieRoll += dexterity;
+            }
+            //otherwise use strength
+            else
+            {
+                dieRoll += strength;
+            }
+        }
+
+        //check if the attack hit the target
+        if (natTwenty || dieRoll >= target.defence)
+        {
+            //declare damage roll
+            int damageRoll;
+            //if the weapon is finesse add dexterity to the damage
+            if (weapon != null && weapon.GetIsFinesse() == true)
+            {
+                damageRoll = dexterity;
+            }
+            //else add 1.5x strength
+            else
+            {
+                damageRoll = (int) (strength * 1.5);
+            }
+
+            //add damage rolls if the character is using a weapon
+            if (weapon != null)
+            {
+                for (int i = 0; i < weapon.GetNumDice(); i++)
+                {
+                    damageRoll += Random.Range(1, weapon.GetDiceSize() + 1);
+                }
+            }
+            else
+            {
+                //default damage is 1d2
+                damageRoll += Random.Range(1, 3);
+            }
+
+            //reduce the target's health by the damage roll
+            target.currentHealth -= damageRoll;
+        }
     }
 
-    public void RangedAttack(Character target, int attackBonus = 0)
-    {
-        //string debug = "";
+    //public void MeleeAttack(Character target, int attackBonus = 0)
+    //{
+    //    //string debug = "";
 
-        int dieRoll = Random.Range(1, 21);
-        //debug += "Rolled " + dieRoll + "(d20)+";
-        dieRoll += dexterity + toHitBonus + attackBonus;
-        //debug += (strength + toHitBonus) + " vs " + target.defence;
+    //    int dieRoll = Random.Range(1, 21);
+    //    //debug += "Rolled " + dieRoll + "(d20)+";
+    //    dieRoll += strength + toHitBonus + attackBonus;
+    //    //debug += (strength + toHitBonus) + " vs " + target.defence;
 
-        if (dieRoll >= target.defence)
-        {
-            //debug += " Hitting, dealing ";
-            int damageRoll = Random.Range(1, 9);
-            //debug += damageRoll + "(d8)";
+    //    if (dieRoll >= target.defence)
+    //    {
+    //        //debug += " Hitting, dealing ";
+    //        int damageRoll = Random.Range(1, 9);
+    //        //debug += damageRoll + "(d8)+";
+    //        damageRoll += (int) (strength * 1.5);
+    //        //debug += ((int)(strength * 1.5)) + " damage";
+    //        target.currentHealth -= damageRoll;
+    //    }
+
+    //    //Debug.Log(debug);
+    //}
+
+    //public void RangedAttack(Character target, int attackBonus = 0)
+    //{
+    //    //string debug = "";
+
+    //    int dieRoll = Random.Range(1, 21);
+    //    //debug += "Rolled " + dieRoll + "(d20)+";
+    //    dieRoll += dexterity + toHitBonus + attackBonus;
+    //    //debug += (strength + toHitBonus) + " vs " + target.defence;
+
+    //    if (dieRoll >= target.defence)
+    //    {
+    //        //debug += " Hitting, dealing ";
+    //        int damageRoll = Random.Range(1, 9);
+    //        //debug += damageRoll + "(d8)";
  
-            target.currentHealth -= damageRoll;
-        }
+    //        target.currentHealth -= damageRoll;
+    //    }
 
-        //Debug.Log(debug);
-    }
+    //    //Debug.Log(debug);
+    //}
 
     //returns if this character's current health is less than 0 or not
     public bool IsAlive()

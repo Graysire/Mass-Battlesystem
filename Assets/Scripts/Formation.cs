@@ -17,6 +17,14 @@ public class Formation : MonoBehaviour
     //the character whose stats are used for all memebrs ofthe unit
     [SerializeField]
     protected Character troop;
+
+    //the melee weapon used by this formation, if any
+    [SerializeField]
+    protected Weapon meleeWeapon = null;
+    //theranged weapon used by this formation, if any
+    [SerializeField]
+    protected Weapon rangedWeapon = null;
+
     //the width of each rank(row) of characters
     [SerializeField]
     protected int frontage;
@@ -46,7 +54,7 @@ public class Formation : MonoBehaviour
 
     //the delay between movements when animating movement between hexes
     [SerializeField]
-    float movementDelay;
+    float movementDelay = 0.1f;
     //boolean to skip the next animation
     bool skipNextAnimation;
     //boolean to determine if an animation is ongoing (and prevent playing other animations while true)
@@ -123,7 +131,7 @@ public class Formation : MonoBehaviour
     //this formation makes a number of attacks against the tagret formation, possibly damaging it
     public void MeleeAttack(Formation target)
     {
-        if (!(pathGrid.GetDistance(transform.position, target.transform.position) == 1))
+        if (!(pathGrid.GetDistance(transform.position, target.transform.position) <= meleeWeapon.GetRange()))
         {
             Debug.Log("Target out of range");
             return;
@@ -147,13 +155,16 @@ public class Formation : MonoBehaviour
         //if this formation is wider by more than 1, make attacks equal to frontage + 4
         else if (frontage > targetRemainingFrontage + 1)
         {
-            numAttackers = targetRemainingFrontage + 2;
+            numAttackers = (targetRemainingFrontage + 2);
         }
         //if this formation is wider by 1, make attacks equal to frontage + 2
         else
         {
             numAttackers = targetRemainingFrontage + 1;
         }
+
+        //multiply the number of melee attackers by the number of ranks that can reach
+        numAttackers *= meleeWeapon.GetReach();
 
         //if there are more attacks than troops remaining, reduce number of attacks to troops remaining
         if (numAttackers > currentTroops)
@@ -194,7 +205,7 @@ public class Formation : MonoBehaviour
         //for each attack, attack, check if a character has died and apply the resulting effects
         for (int attacks = 0; attacks < numAttackers; attacks++)
         {
-            troop.MeleeAttack(target.troop, bonusAttack);
+            troop.Attack(target.troop, meleeWeapon, bonusAttack);
             //if the target troop dies, reset their health and increment the casualties
             if (!target.troop.IsAlive())
             {
@@ -208,7 +219,13 @@ public class Formation : MonoBehaviour
 
     public void RangedAttack(Formation target, bool isVolley)
     {
-        if (!(pathGrid.GetDistance(transform.position, target.transform.position) <= 5))
+        if (rangedWeapon.GetName() == "")
+        {
+            Debug.Log("This Formation has no ranged weapons");
+            hasAttacked = true;
+            return;
+        }
+        else if (!(pathGrid.GetDistance(transform.position, target.transform.position) <= rangedWeapon.GetRange()))
         {
             Debug.Log("Target out of range");
             return;
@@ -218,6 +235,7 @@ public class Formation : MonoBehaviour
             Debug.Log("This Formation has already attacked");
             return;
         }
+        
 
 
         //the number of attacks this formation will make
@@ -226,7 +244,7 @@ public class Formation : MonoBehaviour
         int bonusAttack = 0;
 
         //if the formation is volley firing, all of its troops can attack with a penalty
-        if (isVolley)
+        if (isVolley && rangedWeapon.GetCanVolley())
         {
             numAttackers = currentTroops;
             bonusAttack = -4;
@@ -240,7 +258,7 @@ public class Formation : MonoBehaviour
         //for each attack, attack, check if a character has died and apply the resulting effects
         for (int attacks = 0; attacks < numAttackers; attacks++)
         {
-            troop.RangedAttack(target.troop, bonusAttack);
+            troop.Attack(target.troop, rangedWeapon, bonusAttack);
             //if the target troop dies, reset their health and increment the casualties
             if (!target.troop.IsAlive())
             {

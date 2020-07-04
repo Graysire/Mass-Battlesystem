@@ -23,7 +23,7 @@ public class PathGrid : MonoBehaviour
 
     //the default tile used when no other tile exists on the gird
     [SerializeField]
-    TileBase defaultTile;
+    TileBase defaultTile = null;
 
     //list of nodes forming a path from one node to another
     public List<PathNode> finalPath = new List<PathNode>();
