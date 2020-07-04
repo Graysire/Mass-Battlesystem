@@ -49,7 +49,7 @@ public class GameController : MonoBehaviour
             case BattlePhase.MOVEMENT:
                 foreach (Formation form in formationList)
                 {
-                    form.ResetHasAttacked();
+                    form.SetHasAttacked(false);
                 }
                 currentPhase = BattlePhase.MELEE;
                 break;
@@ -63,7 +63,7 @@ public class GameController : MonoBehaviour
             case BattlePhase.MORALE:
                 foreach (Formation form in formationList)
                 {
-                    form.ResetHasAttacked();
+                    form.SetHasAttacked(false);
                 }
                 currentPhase = BattlePhase.MISSILE;
                 break;

@@ -214,9 +214,11 @@ public class Formation : MonoBehaviour
             }
         }
 
-        hasAttacked = true;
+        SetHasAttacked(true);
     }
 
+    //this formation makes a ranged attack against another formation
+    //if volleying all characters attack, otherwise only the front ranks do
     public void RangedAttack(Formation target, bool isVolley)
     {
         if (rangedWeapon.GetName() == "")
@@ -267,7 +269,7 @@ public class Formation : MonoBehaviour
             }
         }
 
-        hasAttacked = true;
+        SetHasAttacked(true);
     }
 
     //apply any casualties to the current number of troops
@@ -288,10 +290,21 @@ public class Formation : MonoBehaviour
         casualties = 0;
     }
 
-    //resets hasAttacked to false
-    public void ResetHasAttacked()
+    //sets hasAttacked and the color of this formation
+    public void SetHasAttacked(bool hasAttack)
     {
-        hasAttacked = false;
+        if (hasAttack)
+        {
+            hasAttacked = true;
+            Debug.Log("ss");
+            //gameObject.GetComponent<SpriteRenderer>().color = new Color(100, 100, 100, 255);
+            gameObject.GetComponent<SpriteRenderer>().color = Color.grey;
+        }
+        else
+        {
+            hasAttacked = false;
+            gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        }
     }
 
     //turns the formation by facing change (assuming facing change i a number between 5 and -5
@@ -314,12 +327,19 @@ public class Formation : MonoBehaviour
 
             movementRemaining -= Mathf.Abs(facingChange);
         }
+
+        //if no moment remains grey out the formation
+        if (movementRemaining <= 0)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.grey;
+        }
     }
 
-    //resets the movement speed back to full
+    //resets the movement speed back to full and resets color
     public void ResetMovement()
     {
         movementRemaining = troop.GetSpeed();
+        gameObject.GetComponent<SpriteRenderer>().color = Color.white;
     }
 
     //moves this formation to the target hex if it is within movement range
@@ -337,7 +357,6 @@ public class Formation : MonoBehaviour
             movementRemaining -= pathGrid.pathCost;
             //store the final node in case the coroutine needs to end early
             PathNode finalNode = pathGrid.finalPath[pathGrid.finalPath.Count - 1];
-            //subtract the movement cost from the remaining movement
 
             //go through each point
             for (int i = 1; i < pathGrid.finalPath.Count; i++)
@@ -368,6 +387,13 @@ public class Formation : MonoBehaviour
         {
             Debug.Log("No path exists to the target point or the point is out of range");
         }
+
+        //if no moment remains grey out the formation
+        if (movementRemaining <= 0)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.grey;
+        }
+
         //unlock animation
         isAnimating = false;
     }
