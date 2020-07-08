@@ -24,6 +24,9 @@ public class CharacterTemplate
     //how fast the character can move across the battlefield
     [SerializeField]
     protected int speed;
+    //how likely this character is to run away
+    [SerializeField]
+    protected int morale;
 
     //the bonus a character gains to hit per hit dice
     [SerializeField]
@@ -40,6 +43,7 @@ public class CharacterTemplate
         dexterity = template.dexterity;
         constitution = template.constitution;
         speed = template.speed;
+        morale = template.morale;
         toHitProgression = template.toHitProgression;
         defenceProgression = template.defenceProgression;
     }

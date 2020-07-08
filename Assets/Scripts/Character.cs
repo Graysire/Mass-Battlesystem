@@ -149,12 +149,18 @@ public class Character : CharacterTemplate
     //        //debug += " Hitting, dealing ";
     //        int damageRoll = Random.Range(1, 9);
     //        //debug += damageRoll + "(d8)";
- 
+
     //        target.currentHealth -= damageRoll;
     //    }
 
     //    //Debug.Log(debug);
     //}
+
+    //returns the morale of the character
+    public int GetMorale()
+    {
+        return morale;
+    }
 
     //returns if this character's current health is less than 0 or not
     public bool IsAlive()

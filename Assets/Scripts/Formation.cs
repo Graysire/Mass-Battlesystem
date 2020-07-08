@@ -31,6 +31,8 @@ public class Formation : MonoBehaviour
     //the number of ranks(rows) of characters
     [SerializeField]
     protected int ranks;
+    //the number of Characters in this formation at the battle's start
+    protected int maxTroops;
     //the number of Characters remaining in this formation
     [SerializeField]
     protected int currentTroops;
@@ -51,6 +53,8 @@ public class Formation : MonoBehaviour
 
     //whether or not the Formation has its attack remaining
     protected bool hasAttacked = false;
+    //whether or not this formatino needsto check morale during the morale phase
+    protected bool checkMorale = false;
 
     //the delay between movements when animating movement between hexes
     [SerializeField]
@@ -65,7 +69,8 @@ public class Formation : MonoBehaviour
     void Start()
     {
         troop = new Character(template);
-        currentTroops = frontage * ranks;
+        maxTroops = frontage * ranks;
+        currentTroops = maxTroops;
         movementRemaining = troop.GetSpeed();
 
         //get the rotation of the current object
@@ -275,6 +280,15 @@ public class Formation : MonoBehaviour
     //apply any casualties to the current number of troops
     public void ApplyCasualties()
     {
+        //if any casualties are suffered, check morale during the Morale Phase
+        if (casualties > 0)
+        {
+            checkMorale = true;
+        }
+        else
+        {
+            return;
+        }
         //change number of current troops
         currentTroops -= casualties;
         //if this Formation has no remaining troops destroy the Formation
@@ -288,6 +302,35 @@ public class Formation : MonoBehaviour
             ranks = Mathf.CeilToInt(currentTroops / frontage);
         }
         casualties = 0;
+    }
+
+    //calculate and apply the effects of morale
+    public void ApplyMorale()
+    {
+        //roll 1d20 - Morale Value to determine how many base troops are lost
+        int moraleRoll = Mathf.Max(Random.Range(1, 21) - troop.GetMorale(), 0);
+        if (moraleRoll > 0)
+        {
+            //if the formation has less than 25% of its troops remaining multiply how many troops flee by 3
+            if (currentTroops / maxTroops <= 0.25)
+            {
+                moraleRoll *= 3;
+            }
+            //at 50% multiply by 2
+            else if (currentTroops / maxTroops <= 0.5)
+            {
+                moraleRoll *= 2;
+            }
+            //at 75% multiply by 1.5
+            else if (currentTroops / maxTroops <= 0.75)
+            {
+                moraleRoll = (int) (moraleRoll * 1.5);
+            }
+        }
+        //lose troops based on the morale roll
+        currentTroops -= moraleRoll;
+        checkMorale = false;
+
     }
 
     //sets hasAttacked and the color of this formation

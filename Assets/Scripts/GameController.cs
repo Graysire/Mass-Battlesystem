@@ -64,6 +64,7 @@ public class GameController : MonoBehaviour
                 foreach (Formation form in formationList)
                 {
                     form.SetHasAttacked(false);
+                    form.ApplyMorale();
                 }
                 currentPhase = BattlePhase.MISSILE;
                 break;
