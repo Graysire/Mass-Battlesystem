@@ -9,7 +9,7 @@ public class GameController : MonoBehaviour
     //the main GameController
     public static GameController main;
     //the lsit of all Formations participating in the battle
-    public List<Formation> formationList;
+    public List<Army> armyList;
 
     private void Awake()
     {
@@ -39,32 +39,30 @@ public class GameController : MonoBehaviour
         {
             case BattlePhase.MISSILE:
                 //Casualty sub-phase
-                foreach (Formation form in formationList)
+                foreach (Army army in armyList)
                 {
-                    form.ApplyCasualties();
-                    form.ResetMovement();
+                    army.EndCombatPhase();
                 }
                 currentPhase = BattlePhase.MOVEMENT;
                 break;
             case BattlePhase.MOVEMENT:
-                foreach (Formation form in formationList)
+                foreach (Army army in armyList)
                 {
-                    form.SetHasAttacked(false);
+                    army.EndMovementPhase();
                 }
                 currentPhase = BattlePhase.MELEE;
                 break;
             case BattlePhase.MELEE:
-                foreach (Formation form in formationList)
+                foreach (Army army in armyList)
                 {
-                    form.ApplyCasualties();
+                    army.EndCombatPhase();
                 }
                 currentPhase = BattlePhase.MORALE;
                 break;
             case BattlePhase.MORALE:
-                foreach (Formation form in formationList)
+                foreach (Army army in armyList)
                 {
-                    form.SetHasAttacked(false);
-                    form.ApplyMorale();
+                    army.EndMoralePhase();
                 }
                 currentPhase = BattlePhase.MISSILE;
                 break;

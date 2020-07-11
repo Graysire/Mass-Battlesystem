@@ -9,6 +9,9 @@ public class Formation : MonoBehaviour
     protected string formationName;
     //the pathgrid used for this Formation's pathfinding
     PathGrid pathGrid;
+    //the army this Formation belongs to
+    [SerializeField]
+    protected Army army;
 
     //the template the characters in this unit are based off of
     //will likely by removed once other battle set-up functionsare implemented
@@ -87,14 +90,14 @@ public class Formation : MonoBehaviour
         //sets the hex this Formation occupies to be move obstructed
         pathGrid.WorldToNode(transform.position).isMoveObstructed = true;
 
-        //add this formation ot the list of formations participating in the battle
-        GameController.main.formationList.Add(this);
     }
 
     private void Awake()
     {
         //gets the scene's pathgrid
         pathGrid = GameObject.Find("PathManager").GetComponent<PathGrid>();
+        //add this formation ot the list of formations participating in the battle
+        army.AddFormation(this);
     }
 
     // Update is called once per frame
@@ -277,8 +280,8 @@ public class Formation : MonoBehaviour
         SetHasAttacked(true);
     }
 
-    //apply any casualties to the current number of troops
-    public void ApplyCasualties()
+    //apply any casualties to the current number of troops and returns the new number of troops
+    public int ApplyCasualties()
     {
         //if any casualties are suffered, check morale during the Morale Phase
         if (casualties > 0)
@@ -287,7 +290,7 @@ public class Formation : MonoBehaviour
         }
         else
         {
-            return;
+            return currentTroops;
         }
         //change number of current troops
         currentTroops -= casualties;
@@ -302,35 +305,40 @@ public class Formation : MonoBehaviour
             ranks = Mathf.CeilToInt(currentTroops / frontage);
         }
         casualties = 0;
+
+        return currentTroops;
     }
 
-    //calculate and apply the effects of morale
-    public void ApplyMorale()
+    //calculate and apply the effects of morale, returns the new current number of troops
+    public int ApplyMorale()
     {
-        //roll 1d20 - Morale Value to determine how many base troops are lost
-        int moraleRoll = Mathf.Max(Random.Range(1, 21) - troop.GetMorale(), 0);
-        if (moraleRoll > 0)
+        if (checkMorale)
         {
-            //if the formation has less than 25% of its troops remaining multiply how many troops flee by 3
-            if (currentTroops / maxTroops <= 0.25)
+            //roll 1d20 - Morale Value to determine how many base troops are lost
+            int moraleRoll = Mathf.Max(Random.Range(1, 21) - troop.GetMorale(), 0);
+            if (moraleRoll > 0)
             {
-                moraleRoll *= 3;
+                //if the formation has less than 25% of its troops remaining multiply how many troops flee by 3
+                if (currentTroops / maxTroops <= 0.25)
+                {
+                    moraleRoll *= 3;
+                }
+                //at 50% multiply by 2
+                else if (currentTroops / maxTroops <= 0.5)
+                {
+                    moraleRoll *= 2;
+                }
+                //at 75% multiply by 1.5
+                else if (currentTroops / maxTroops <= 0.75)
+                {
+                    moraleRoll = (int)(moraleRoll * 1.5);
+                }
             }
-            //at 50% multiply by 2
-            else if (currentTroops / maxTroops <= 0.5)
-            {
-                moraleRoll *= 2;
-            }
-            //at 75% multiply by 1.5
-            else if (currentTroops / maxTroops <= 0.75)
-            {
-                moraleRoll = (int) (moraleRoll * 1.5);
-            }
+            //lose troops based on the morale roll
+            currentTroops -= moraleRoll;
+            checkMorale = false;
         }
-        //lose troops based on the morale roll
-        currentTroops -= moraleRoll;
-        checkMorale = false;
-
+        return currentTroops;
     }
 
     //sets hasAttacked and the color of this formation
@@ -457,5 +465,11 @@ public class Formation : MonoBehaviour
     public int GetFacing()
     {
         return facing;
+    }
+
+    //returns the current number of troops in this formation
+    public int GetCurrentTroops()
+    {
+        return currentTroops;
     }
 }
